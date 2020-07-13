@@ -5,16 +5,16 @@ import io.cucumber.java.Before;
 import org.example.core.Internationalization;
 import org.example.core.ScenarioContext;
 import org.example.core.ui.DriverFactory;
-import org.example.schoology.pages.courses.Courses;
-import org.example.schoology.pages.courses.DeleteCoursePopup;
+import org.example.schoology.pages.groups.Groups;
+import org.example.schoology.pages.groups.DeleteGroupPopup;
 import org.example.schoology.pages.Home;
 import org.example.schoology.pages.SubMenu;
 
-public class CourseHooks {
+public class GroupHooks {
 
     private ScenarioContext context;
 
-    public CourseHooks(final ScenarioContext context) {
+    public GroupHooks(final ScenarioContext context) {
         this.context = context;
     }
 
@@ -24,14 +24,13 @@ public class CourseHooks {
 
     }
 
-    @After(value = "@deleteCourse")
+    @After(value = "@deleteGroup")
     public void deleteCourse() {
         DriverFactory.getDriver().get("https://app.schoology.com");
-        String menu = Internationalization.getInstance().getValue("menuCourses");
+        String menu = Internationalization.getInstance().getValue("menuGroups");
         SubMenu subMenu = new Home().clickMenu(menu);
         subMenu.clickViewListLink(menu);
-        DeleteCoursePopup deleteCoursePopup = new Courses().clickDeleteCourse(context.getValue("CourseKey"));
-        deleteCoursePopup.clickDeleteButton();
+        DeleteGroupPopup deleteGroupPopup = new Groups().clickDeleteGroup(context.getValue("GroupKey"));
+        deleteGroupPopup.clickDeleteButton();
     }
-
 }

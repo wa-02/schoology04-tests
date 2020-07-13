@@ -11,13 +11,18 @@ public class Groups extends ViewList {
 
     public static final String GROUP_ACTIONS_BUTTON = "//a[text()='%s']/ancestor::li//div[@href='#']";
     public static final String SELECT_ACTIONS = "//a[text()='%s']/ancestor::li//ul//li[@class='action-edit']";
+    public static final String DELETE_ACTIONS = "//a[text()='%s']/ancestor::li//ul//li[@class='action-delete']";
     public static final String GROUP_BY_NAME = "//a[text()='%s']";
 
-    @FindBy(css = "a.create-group")
+    @FindBy(xpath = "//a[@href='/groups/new']")
     private WebElement createGroupButton;
 
     public CreateGroupPopup clickCreateGroupButton() {
-        createGroupButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(createGroupButton));
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", createGroupButton);
+
         return new CreateGroupPopup();
     }
 
@@ -27,7 +32,7 @@ public class Groups extends ViewList {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView();", groupActionsButton);
 
-        wait.until(ExpectedConditions.visibilityOf(groupActionsButton));
+        wait.until(ExpectedConditions.elementToBeClickable(groupActionsButton));
         groupActionsButton.click();
         driver.findElement(By.xpath(String.format(SELECT_ACTIONS, groupName))).click();
         return new EditGroupPopup();
@@ -35,6 +40,18 @@ public class Groups extends ViewList {
 
     public String getGroupByName(final String groupName) {
         return driver.findElement(By.xpath(String.format(GROUP_BY_NAME, groupName))).getText();
+    }
+
+    public DeleteGroupPopup clickDeleteGroup(final String groupName) {
+        WebElement groupActionsButton = driver.findElement(By.xpath(String.format(GROUP_ACTIONS_BUTTON, groupName)));
+        // Scroll
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView();", groupActionsButton);
+
+        wait.until(ExpectedConditions.visibilityOf(groupActionsButton));
+        groupActionsButton.click();
+        driver.findElement(By.xpath(String.format(DELETE_ACTIONS, groupName))).click();
+        return new DeleteGroupPopup();
     }
 
 }
